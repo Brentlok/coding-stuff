@@ -7,6 +7,10 @@ type Options<T extends Array<unknown>> = {
     onSuccess?(data: T): void,
 }
 
+export type LazyData<T extends Array<unknown>> = {
+    data: T
+}
+
 /**
  * Hook to create lazy data list with jotai.
  * Into options you can pass a loader function that will be called when the list is empty.
@@ -30,7 +34,7 @@ export const useLazyDataList = <T extends Array<unknown>>(listAtom: PrimitiveAto
     const load = async () => {
         try {
             const data = await options.loader()
-            
+
             setList(data)
             proxy.data = data as Awaited<T>
             options.onSuccess?.(data) 
@@ -49,7 +53,7 @@ export const useLazyDataList = <T extends Array<unknown>>(listAtom: PrimitiveAto
     }
 
     return [
-        proxy,
+        proxy as LazyData<T>,
         onChange
     ] as const
 }
